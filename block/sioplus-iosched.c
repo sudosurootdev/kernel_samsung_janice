@@ -123,6 +123,9 @@ sio_choose_expired_request(struct sio_data *sd)
 {
 	struct request *rq;
 
+	/* Reset (non-expired-)batch-counter */
+	sd->batched = 0;
+
 	/*
 	 * Check expired requests.
 	 * Asynchronous requests have priority over synchronous.
@@ -151,6 +154,9 @@ sio_choose_request(struct sio_data *sd, int data_dir)
 {
 	struct list_head *sync = sd->fifo_list[SYNC];
 	struct list_head *async = sd->fifo_list[ASYNC];
+
+	/* Increase (non-expired-)batch-counter */
+	sd->batched++;
 
 	/*
 	 * Retrieve request from available fifo list.
@@ -181,8 +187,6 @@ sio_dispatch_request(struct sio_data *sd, struct request *rq)
 	rq_fifo_clear(rq);
 	elv_dispatch_add_tail(rq->q, rq);
 
-	sd->batched++;
-
 	if (rq_data_dir(rq)) {
 		sd->starved = 0;
 	} else {
@@ -203,10 +207,8 @@ sio_dispatch_requests(struct request_queue *q, int force)
 	 * Retrieve any expired request after a batch of
 	 * sequential requests.
 	 */
-	if (sd->batched >= sd->fifo_batch) {
-		sd->batched = 0;
+	if (sd->batched >= sd->fifo_batch)
 		rq = sio_choose_expired_request(sd);
-	}
 
 	/* Retrieve request */
 	if (!rq) {
