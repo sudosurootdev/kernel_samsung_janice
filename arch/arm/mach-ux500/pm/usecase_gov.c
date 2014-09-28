@@ -66,8 +66,13 @@ static bool user_config_updated;
 static enum ux500_uc current_uc = UX500_UC_MAX;
 static bool is_work_scheduled;
 static bool is_early_suspend;
-/* Since usecase governor messes max cpufreq, disable it */
+
+#ifndef CONFIG_DVFS_LIMIT
+/* Since usecase governor messes max cpufreq, disable it if DVFS_LIMIT is not set */
 static bool uc_master_enable = false;
+#else
+static bool uc_master_enable = true;
+#endif
 
 static unsigned int cpuidle_deepest_state;
 
