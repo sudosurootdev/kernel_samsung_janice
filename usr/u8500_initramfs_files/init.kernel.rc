@@ -1,0 +1,13 @@
+on post-fs
+    start module_loader
+
+on boot
+    # Load Dynamic Governor
+    insmod /system/lib/modules/cpufreq_dynamic.ko
+
+on property:sys.boot_completed=1
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor "dynamic"
+
+service module_loader /system/bin/logwrapper /sbin/load_modules.sh
+    oneshot
+    disabled
