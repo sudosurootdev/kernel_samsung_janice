@@ -246,10 +246,8 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 
 HOSTCC       = gcc
 HOSTCXX      = g++
-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -Ofast -fomit-frame-pointer -pipe -fno-delete-null-pointer-checks -mtls-dialect=gnu2 -maccumulate-outgoing-args \
-		-minline-all-stringops -minline-stringops-dynamically
-HOSTCXXFLAGS = -Ofast -fomit-frame-pointer -pipe -fno-delete-null-pointer-checks -mtls-dialect=gnu2 -maccumulate-outgoing-args -minline-all-stringops \
-		-minline-stringops-dynamically
+HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
+HOSTCXXFLAGS = -O2
 
 # Decide whether to build built-in, modular, or both.
 # Normally, just do built-in.
@@ -371,17 +369,7 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security \
-		   -fno-delete-null-pointer-checks \
-		   -mcpu=cortex-a9 \
-		   -mfpu=neon-fp16 \
-		   -mfloat-abi=softfp \
-		   -pipe \
-		   -mthumb-interwork \
-		   -march=armv7 \
-		   -mtune=cortex-a9 \
-		   -marm \
-		   -mtls-dialect=gnu2
-
+		   -fno-delete-null-pointer-checks
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
 KBUILD_AFLAGS   := -D__ASSEMBLY__
@@ -574,7 +562,7 @@ all: vmlinux
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= -Os
 else
-KBUILD_CFLAGS	+= -Ofast
+KBUILD_CFLAGS	+= -O2
 endif
 
 include $(srctree)/arch/$(SRCARCH)/Makefile
