@@ -22,12 +22,12 @@ export FEATURE_STE_BT=y
 endif
 
 # only do this if we are buidling out of tree
-ifneq ($(KERNEL_OUTPUT),)
-ifneq ($(KERNEL_OUTPUT), $(abspath $(TOP)/kernel))
-PRIVATE_KERNEL_ARGS += O=$(KERNEL_OUTPUT)
+ifneq ($(KERNEL_OUT),)
+ifneq ($(KERNEL_OUT), $(abspath $(TOP)/kernel))
+PRIVATE_KERNEL_ARGS += O=$(KERNEL_OUT)
 endif
 else
-KERNEL_OUTPUT := $(call my-dir)
+KERNEL_OUT := $(call my-dir)
 endif
 
 # STE Connectivity configuration
@@ -38,7 +38,7 @@ build-kernel: $(PRODUCT_OUT)/zImage
 # Include kernel in the Android build system
 include $(CLEAR_VARS)
 
-KERNEL_LIBPATH := $(KERNEL_OUTPUT)/arch/arm/boot
+KERNEL_LIBPATH := $(KERNEL_OUT)/arch/arm/boot
 LOCAL_PATH := $(KERNEL_LIBPATH)
 LOCAL_SRC_FILES := zImage
 LOCAL_MODULE := $(LOCAL_SRC_FILES)
@@ -49,7 +49,7 @@ LOCAL_MODULE_PATH := $(PRODUCT_OUT)
 include $(BUILD_PREBUILT)
 
 include $(CLEAR_VARS)
-KERNEL_LIBPATH := $(KERNEL_OUTPUT)
+KERNEL_LIBPATH := $(KERNEL_OUT)
 LOCAL_PATH := $(KERNEL_LIBPATH)
 LOCAL_SRC_FILES := vmlinux
 LOCAL_MODULE := $(LOCAL_SRC_FILES)
@@ -67,13 +67,13 @@ include $(BUILD_PREBUILT)
 #iifeq ($(ONE_SHOT_MAKEFILE),)
 #$(KERNEL_OUTPUT)/arch/arm/boot/uImage: $(UBOOT_OUTPUT)/tools/mkimage FORCE
 #else
-$(KERNEL_OUTPUT)/arch/arm/boot/zImage: FORCE
+$(KERNEL_OUT)/arch/arm/boot/zImage: FORCE
 #endif
 
 # only do this if we are buidling out of tree
-ifneq ($(KERNEL_OUTPUT),)
-ifneq ($(KERNEL_OUTPUT), $(abspath $(TOP)/kernel))
-	@mkdir -p $(KERNEL_OUTPUT)
+ifneq ($(KERNEL_OUT),)
+ifneq ($(KERNEL_OUT), $(abspath $(TOP)/kernel))
+	@mkdir -p $(KERNEL_OUT)
 endif
 endif
 
@@ -84,41 +84,41 @@ else
 endif
 
 ifeq ($(SEC_PRODUCT_SHIP),true) 
-	kernel/scripts/config --file $(KERNEL_OUTPUT)/.config \
+	kernel/scripts/config --file $(KERNEL_OUT)/.config \
 		--enable CONFIG_SAMSUNG_PRODUCT_SHIP
 endif
 
 ifeq ($(SEC_DEBUG_LEVEL),high)
-	kernel/scripts/config --file $(KERNEL_OUTPUT)/.config \
+	kernel/scripts/config --file $(KERNEL_OUT)/.config \
 		--set-val CONFIG_SEC_DEBUG_LEVEL 2
 else
 ifeq ($(SEC_DEBUG_LEVEL),low)
-	kernel/scripts/config --file $(KERNEL_OUTPUT)/.config \
+	kernel/scripts/config --file $(KERNEL_OUT)/.config \
 		--set-val CONFIG_SEC_DEBUG_LEVEL 0
 endif
 endif
 # Disable SHRM Signature verification feature from here
 ifeq ($(SHRM_ENABLE_FEATURE_SIGNATURE_VERIFICATION),false)
-	kernel/scripts/config --file $(KERNEL_OUTPUT)/.config \
+	kernel/scripts/config --file $(KERNEL_OUT)/.config \
 		--disable CONFIG_U8500_SHRM_ENABLE_FEATURE_SIGNATURE_VERIFICATION
 endif
 
 ifneq ($(CONNECTIVITY_ENABLE_FEATURE_STE_WLAN),true)
-	kernel/scripts/config --file $(KERNEL_OUTPUT)/.config \
+	kernel/scripts/config --file $(KERNEL_OUT)/.config \
 		--disable CONFIG_COMPAT_WIRELESS
-	kernel/scripts/config --file $(KERNEL_OUTPUT)/.config \
+	kernel/scripts/config --file $(KERNEL_OUT)/.config \
 		--disable CONFIG_COMPAT_WIRELESS_MODULES
-#	kernel/scripts/config --file $(KERNEL_OUTPUT)/.config \
+#	kernel/scripts/config --file $(KERNEL_OUT)/.config \
 		--disable CONFIG_CFG80211
-	kernel/scripts/config --file $(KERNEL_OUTPUT)/.config \
+	kernel/scripts/config --file $(KERNEL_OUT)/.config \
 		--disable CONFIG_MAC80211
-	kernel/scripts/config --file $(KERNEL_OUTPUT)/.config \
+	kernel/scripts/config --file $(KERNEL_OUT)/.config \
 		--disable CONFIG_LIB80211
-	kernel/scripts/config --file $(KERNEL_OUTPUT)/.config \
+	kernel/scripts/config --file $(KERNEL_OUT)/.config \
 		--disable CONFIG_COMPAT_MAC80211_RC_DEFAULT
 endif
 ifneq ($(findstring $(TARGET_PRODUCT), $(PRODUCT_JB_UPG)),)
-	kernel/scripts/config --file $(KERNEL_OUTPUT)/.config \
+	kernel/scripts/config --file $(KERNEL_OUT)/.config \
 		--set-str CONFIG_INITRAMFS_SOURCE "$(abspath $(TOP)/$(TARGET_ROOT_OUT))" \
 		--set-val CONFIG_INITRAMFS_ROOT_UID 0 \
 		--set-val CONFIG_INITRAMFS_ROOT_GID 0 \
@@ -139,7 +139,7 @@ ifeq ($(KERNEL_NO_MODULES),)
 else
 	@echo Skipping building of kernel modules, KERNEL_NO_MODULES set
 endif
-	cp -u $(KERNEL_OUTPUT)/vmlinux $(PRODUCT_OUT)
+	cp -u $(KERNEL_OUT)/vmlinux $(PRODUCT_OUT)
 
 ifneq ($(findstring $(TARGET_PRODUCT), $(PRODUCT_JB_UPG)),)
 	cd $(KERNEL_OUTPUT)/arch/arm/boot; \
@@ -164,9 +164,9 @@ build-kernel3: ramdisk init-symlinks recoveryimage build-kernel
 
 menuconfig-kernel:
 # only do this if we are buidling out of tree
-ifneq ($(KERNEL_OUTPUT),)
-ifneq ($(KERNEL_OUTPUT), $(abspath $(TOP)/kernel))
-	@mkdir -p $(KERNEL_OUTPUT)
+ifneq ($(KERNEL_OUT),)
+ifneq ($(KERNEL_OUT), $(abspath $(TOP)/kernel))
+	@mkdir -p $(KERNEL_OUT)
 endif
 endif
 
